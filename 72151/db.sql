@@ -90,7 +90,7 @@ CREATE TABLE USUARIOS (
 CREATE TABLE UBICACIONES (
     id_direccion INT AUTO_INCREMENT PRIMARY KEY,
     id_ubicacion VARCHAR(20) NOT NULL UNIQUE,
-    tipo_ubicacion ENUM('almacén', 'tienda', 'bodega') NOT NULL,
+    tipo_ubicacion ENUM('almacen', 'tienda', 'bodega') NOT NULL,
     nombre_ubicacion VARCHAR(100) NOT NULL,
     responsable VARCHAR(100),
     INDEX idx_tipo_ubicacion (tipo_ubicacion),

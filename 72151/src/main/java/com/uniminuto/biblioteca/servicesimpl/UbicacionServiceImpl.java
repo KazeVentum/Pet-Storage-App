@@ -17,7 +17,11 @@ public class UbicacionServiceImpl implements UbicacionService {
     
     @Override
     public List<Ubicacion> listarUbicaciones() throws BadRequestException {
-        return ubicacionRepository.findAll();
+        try {
+            return ubicacionRepository.findAll();
+        } catch (Exception e) {
+            throw new BadRequestException("Error al listar ubicaciones: " + e.getMessage());
+        }
     }
     
     @Override

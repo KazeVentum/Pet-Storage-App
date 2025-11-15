@@ -1,8 +1,10 @@
 package com.uniminuto.biblioteca.services;
 
 import com.uniminuto.biblioteca.entity.Inventario;
-import java.util.List;
+import com.uniminuto.biblioteca.entity.ProductoBajoStockDTO;
 import org.apache.coyote.BadRequestException;
+
+import java.util.List;
 
 public interface InventarioService {
     List<Inventario> listarInventarios() throws BadRequestException;
@@ -11,5 +13,6 @@ public interface InventarioService {
     List<Inventario> listarProductosBajoStock() throws BadRequestException;
     Inventario guardarInventario(Inventario inventario) throws BadRequestException;
     Inventario actualizarInventario(Inventario inventario) throws BadRequestException;
+    List<ProductoBajoStockDTO> findBajoStock(String ubicacion, String sortBy, String order, int limit);
 }
 

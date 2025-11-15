@@ -1,5 +1,6 @@
 package com.uniminuto.biblioteca.entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +38,12 @@ public class Ubicacion implements Serializable {
     private String responsable;
     
     public enum TipoUbicacion {
-        almacén, tienda, bodega
+        almacen, tienda, bodega;
+        
+        @JsonValue
+        public String toValue() {
+            return this.name();
+        }
     }
 }
 
