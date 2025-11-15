@@ -2,13 +2,13 @@ import { Producto } from './producto';
 import { Ubicacion } from './ubicacion';
 
 export class Inventario {
-    id_inventario?: number;
-    id_producto: number;
-    id_direccion: number;
-    stock_minimo: number;
-    stock_maximo: number;
-    stock_actual: number;
-    fecha_actualizacion?: Date;
+    idInventario?: number;
+    idProducto: number;
+    idDireccion: number;
+    stockMinimo: number;
+    stockMaximo: number;
+    stockActual: number;
+    fechaActualizacion?: Date;
     producto?: Producto;
     ubicacion?: Ubicacion;
 }

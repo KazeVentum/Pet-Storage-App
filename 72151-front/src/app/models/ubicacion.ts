@@ -1,8 +1,8 @@
 export class Ubicacion {
-    id_direccion?: number;
-    id_ubicacion: string;
-    tipo_ubicacion: 'almacén' | 'tienda' | 'bodega';
-    nombre_ubicacion: string;
+    idDireccion?: number;
+    idUbicacion: string;
+    tipoUbicacion: 'almacen' | 'tienda' | 'bodega';
+    nombreUbicacion: string;
     responsable?: string;
 }
 

@@ -8,32 +8,19 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class InventarioService {
-  private readonly api = 'inventario';
+  private api = 'inventario';
 
-  constructor(private readonly backendService: BackendService) {}
+  constructor(private backendService: BackendService) {}
 
-  getInventarios(): Observable<Inventario[]> {
-    return this.backendService.get(environment.apiUrl, this.api, 'listar');
-  }
-
-  getInventario(id: number): Observable<Inventario> {
+  obtenerInventario(id: number): Observable<Inventario> {
     return this.backendService.get(environment.apiUrl, this.api, `obtener/${id}`);
   }
 
-  getInventarioPorUbicacion(idUbicacion: number): Observable<Inventario[]> {
+  listarInventariosPorUbicacion(idUbicacion: number): Observable<Inventario[]> {
     return this.backendService.get(environment.apiUrl, this.api, `listar-por-ubicacion/${idUbicacion}`);
   }
 
-  getProductosBajoStock(): Observable<Inventario[]> {
+  listarProductosBajoStock(): Observable<Inventario[]> {
     return this.backendService.get(environment.apiUrl, this.api, 'productos-bajo-stock');
   }
-
-  guardarInventario(inventario: Inventario): Observable<any> {
-    return this.backendService.post(environment.apiUrl, this.api, 'guardar', inventario);
-  }
-
-  actualizarInventario(inventario: Inventario): Observable<any> {
-    return this.backendService.put(environment.apiUrl, this.api, 'actualizar', inventario);
-  }
 }
-

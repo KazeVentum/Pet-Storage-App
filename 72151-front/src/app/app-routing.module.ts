@@ -6,6 +6,7 @@ import { ProductoComponent } from './demo/pages/producto/producto.component';
 import { MarcaComponent } from './demo/pages/marca/marca.component';
 import { RazaComponent } from './demo/pages/raza/raza.component';
 import { ProveedorComponent } from './demo/pages/proveedor/proveedor.component';
+import { InventarioComponent } from './demo/pages/inventario/inventario.component';
 
 export const routes: Routes = [
   {
@@ -22,7 +23,8 @@ export const routes: Routes = [
       { path: 'productos', component: ProductoComponent, data: { title: 'Productos' }},
       { path: 'marcas', component: MarcaComponent, data: { title: 'Marcas' }},
       { path: 'razas', component: RazaComponent, data: { title: 'Razas' }},
-      { path: 'proveedores', component: ProveedorComponent, data: { title: 'Proveedores' }},
+      { path: 'proveedores', component: ProveedorComponent, data: { title: 'Proveedores' }}, 
+      { path: 'inventario', component: InventarioComponent, data: { title: 'Inventario' }}
     ]
   },
   { path: '**', redirectTo: 'inicio' }

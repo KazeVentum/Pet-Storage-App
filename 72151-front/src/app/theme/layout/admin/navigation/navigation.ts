@@ -61,6 +61,14 @@ export const NavigationItems: NavigationItem[] = [
         url: '/inicio/proveedores',
         icon: 'feather icon-grid',
         classes: 'nav-item'
+      },
+      {
+        id: 'inventario',
+        title: 'Inventario',
+        type: 'item',
+        url: '/inicio/inventario',
+        icon: 'feather icon-book',
+        classes: 'nav-item'
       }
     ]
   },
