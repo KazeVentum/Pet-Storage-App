@@ -1,0 +1,84 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <div class="row">
+        <div class="col">
+          <button class="btn btn-outline-primary btn-sm" (click)="crearMarcaModal('C')" title="Crear una marca nueva">
+            <i class="fa fa-plus"></i>
+            &nbsp;Nueva Marca
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <div class="table table-responsive">
+                <table class="table table-responsive table-stripped">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Fecha Creación</th>
+                      <th class="text-center">Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="marcas.length === 0">
+                    <tr>
+                      <td colspan="3" class="text-center">No hay registros disponibles</td>
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="marcas.length > 0">
+                    <tr *ngFor="let marca of marcas">
+                      <td>{{ marca.nombreMarca }}</td>
+                      <td>{{ marca.fechaCreacion | date:'yyyy-MM-dd' }}</td>
+                      <td class="text-center">
+                        <button class="btn btn-outline-primary btn-sm" title="Editar marca" (click)="abrirModoEdicion(marca)">
+                          <i class="fa fa-edit"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="crearMarcaModal" tabindex="-1" aria-labelledby="crearMarcaModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crearMarcaModalLabel">{{ titleModal }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form">
+          <div class="mb-3">
+            <label for="nombre_marca" class="form-label">Nombre de la Marca</label>
+            <input
+              type="text"
+              formControlName="nombreMarca"
+              class="form-control"
+              id="nombreMarca"
+              placeholder="Ingrese el nombre de la marca"
+            />
+            <div *ngIf="form.get('nombreMarca')?.hasError('required') && form.get('nombreMarca')?.touched" class="text-danger">
+              El nombre de la marca es requerido.
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="guardarMarca()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

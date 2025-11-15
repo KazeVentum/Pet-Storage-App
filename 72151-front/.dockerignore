@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.gitignore
+.idea
+*.iml
+*.log
+.DS_Store
+README.md
+LICENSE
+.vscode
+coverage
+.angular
+

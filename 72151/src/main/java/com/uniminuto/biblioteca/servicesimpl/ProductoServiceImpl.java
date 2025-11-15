@@ -1,0 +1,135 @@
+package com.uniminuto.biblioteca.servicesimpl;
+
+import com.uniminuto.biblioteca.entity.Marca;
+import com.uniminuto.biblioteca.entity.Producto;
+import com.uniminuto.biblioteca.entity.Raza;
+import com.uniminuto.biblioteca.repository.MarcaRepository;
+import com.uniminuto.biblioteca.repository.ProductoRepository;
+import com.uniminuto.biblioteca.repository.RazaRepository;
+import com.uniminuto.biblioteca.services.ProductoService;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class ProductoServiceImpl implements ProductoService {
+    
+    @Autowired
+    private ProductoRepository productoRepository;
+    
+    @Autowired
+    private MarcaRepository marcaRepository;
+    
+    @Autowired
+    private RazaRepository razaRepository;
+    
+    @Override
+    public List<Producto> listarProductos() throws BadRequestException {
+        return productoRepository.findAll();
+    }
+    
+    @Override
+    public List<Producto> listarProductosActivos() throws BadRequestException {
+        return productoRepository.findProductosActivos();
+    }
+    
+    @Override
+    public Producto obtenerProducto(Integer idProducto) throws BadRequestException {
+        Optional<Producto> optProducto = productoRepository.findById(idProducto);
+        if (!optProducto.isPresent()) {
+            throw new BadRequestException("No se encuentra el producto con el id = " + idProducto);
+        }
+        return optProducto.get();
+    }
+    
+    @Override
+    @Transactional
+    public Producto guardarProducto(Producto producto) throws BadRequestException {
+        if (producto.getNombreProducto() == null || producto.getNombreProducto().trim().isEmpty()) {
+            throw new BadRequestException("El nombre del producto es obligatorio");
+        }
+        if (producto.getMarca() == null || producto.getMarca().getIdMarca() == null) {
+            throw new BadRequestException("La marca es obligatoria");
+        }
+        Optional<Marca> optMarca = marcaRepository.findById(producto.getMarca().getIdMarca());
+        if (!optMarca.isPresent()) {
+            throw new BadRequestException("No se encuentra la marca con el id = " + producto.getMarca().getIdMarca());
+        }
+        producto.setMarca(optMarca.get());
+        
+        if (producto.getRazas() != null && !producto.getRazas().isEmpty()) {
+            Set<Raza> razasValidadas = new HashSet<>();
+            for (Raza raza : producto.getRazas()) {
+                if (raza.getIdRaza() != null) {
+                    Optional<Raza> optRaza = razaRepository.findById(raza.getIdRaza());
+                    if (optRaza.isPresent()) {
+                        razasValidadas.add(optRaza.get());
+                    }
+                }
+            }
+            producto.setRazas(razasValidadas);
+        }
+        
+        if (producto.getEstado() == null) {
+            producto.setEstado(Producto.EstadoProducto.activo);
+        }
+        
+        return productoRepository.save(producto);
+    }
+    
+    @Override
+    @Transactional
+    public Producto actualizarProducto(Producto producto) throws BadRequestException {
+        if (producto.getIdProducto() == null) {
+            throw new BadRequestException("El ID del producto es obligatorio para actualizar");
+        }
+        Optional<Producto> optProducto = productoRepository.findById(producto.getIdProducto());
+        if (!optProducto.isPresent()) {
+            throw new BadRequestException("No se encuentra el producto con el id = " + producto.getIdProducto());
+        }
+        
+        Producto productoExistente = optProducto.get();
+        productoExistente.setNombreProducto(producto.getNombreProducto());
+        productoExistente.setDescripcion(producto.getDescripcion());
+        productoExistente.setPrecioVenta(producto.getPrecioVenta());
+        productoExistente.setPrecioCompra(producto.getPrecioCompra());
+        productoExistente.setEstado(producto.getEstado());
+        productoExistente.setPesoKg(producto.getPesoKg());
+        
+        if (producto.getMarca() != null && producto.getMarca().getIdMarca() != null) {
+            Optional<Marca> optMarca = marcaRepository.findById(producto.getMarca().getIdMarca());
+            if (optMarca.isPresent()) {
+                productoExistente.setMarca(optMarca.get());
+            }
+        }
+        
+        if (producto.getRazas() != null) {
+            Set<Raza> razasValidadas = new HashSet<>();
+            for (Raza raza : producto.getRazas()) {
+                if (raza.getIdRaza() != null) {
+                    Optional<Raza> optRaza = razaRepository.findById(raza.getIdRaza());
+                    if (optRaza.isPresent()) {
+                        razasValidadas.add(optRaza.get());
+                    }
+                }
+            }
+            productoExistente.setRazas(razasValidadas);
+        }
+        
+        return productoRepository.save(productoExistente);
+    }
+    
+    @Override
+    public void eliminarProducto(Integer idProducto) throws BadRequestException {
+        if (!productoRepository.existsById(idProducto)) {
+            throw new BadRequestException("No se encuentra el producto con el id = " + idProducto);
+        }
+        productoRepository.deleteById(idProducto);
+    }
+}
+

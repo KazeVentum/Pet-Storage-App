@@ -1,0 +1,126 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <div class="row">
+        <div class="col">
+          <button class="btn btn-outline-primary btn-sm" (click)="crearProveedorModal('C')" title="Crear un proveedor nuevo">
+            <i class="fa fa-plus"></i>
+            &nbsp;Nuevo Proveedor
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <div class="table table-responsive">
+                <table class="table table-responsive table-stripped">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Teléfono</th>
+                      <th>Email</th>
+                      <th>Estado</th>
+                      <th class="text-center">Opciones</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="proveedores.length === 0">
+                    <tr>
+                      <td colspan="5" class="text-center">No hay registros disponibles</td>
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="proveedores.length > 0">
+                    <tr *ngFor="let proveedor of proveedores">
+                      <td>{{ proveedor.nombreProveedor }}</td>
+                      <td>{{ proveedor.telefono || 'N/A' }}</td>
+                      <td>{{ proveedor.email || 'N/A' }}</td>
+                      <td>
+                        <span [class]="'badge bg-' + (proveedor.activo ? 'success' : 'danger')">
+                          {{ proveedor.activo ? 'Activo' : 'Inactivo' }}
+                        </span>
+                      </td>
+                      <td class="text-center">
+                        <button class="btn btn-outline-primary btn-sm" title="Editar proveedor" (click)="abrirModoEdicion(proveedor)">
+                          <i class="fa fa-edit"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="crearProveedorModal" tabindex="-1" aria-labelledby="crearProveedorModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crearProveedorModalLabel">{{ titleModal }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form">
+          <div class="mb-3">
+            <label for="nombre_proveedor" class="form-label">Nombre del Proveedor</label>
+            <input
+              type="text"
+              formControlName="nombreProveedor"
+              class="form-control"
+              id="nombre_proveedor"
+              placeholder="Ingrese el nombre del proveedor"
+            />
+            <div *ngIf="form.get('nombreProveedor')?.hasError('required') && form.get('nombreProveedor')?.touched" class="text-danger">
+              El nombre del proveedor es requerido.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input
+              type="text"
+              formControlName="telefono"
+              class="form-control"
+              id="telefono"
+              placeholder="Ingrese el teléfono"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              formControlName="email"
+              class="form-control"
+              id="email"
+              placeholder="Ingrese el email"
+            />
+            <div *ngIf="form.get('email')?.hasError('email') && form.get('email')?.touched" class="text-danger">
+              El email no es válido.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" formControlName="activo" id="activo">
+              <label class="form-check-label" for="activo">
+                Activo
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="guardarProveedor()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
