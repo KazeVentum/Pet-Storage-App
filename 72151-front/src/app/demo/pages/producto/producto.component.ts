@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Producto } from 'src/app/models/producto';
 import { ProductoService } from './service/producto.service';
@@ -10,6 +10,7 @@ import { MarcaService } from 'src/app/services/marca.service';
 import { Raza } from 'src/app/models/raza';
 import { RazaService } from 'src/app/services/raza.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
+import { ProductoMasVendido } from 'src/app/models/producto-mas-vendido';
 
 declare const bootstrap: any;
 
@@ -20,7 +21,7 @@ declare const bootstrap: any;
   templateUrl: './producto.component.html',
   styleUrl: './producto.component.scss'
 })
-export class ProductoComponent {
+export class ProductoComponent implements OnInit {
   msjSpinner: string = '';
   modalInstance: any;
   modoFormulario: string = '';
@@ -31,6 +32,14 @@ export class ProductoComponent {
   marcas: Marca[] = [];
   razas: Raza[] = [];
   razasSeleccionadas: number[] = [];
+
+  // Propiedades para Productos Más Vendidos
+  diasOptions: number[] = [10, 15, 20, 30];
+  limitOptions: number[] = [3, 5, 10];
+  selectedDias: number = 30;
+  selectedLimit: number = 3;
+  productosMasVendidos: ProductoMasVendido[] = [];
+  mostrarProductosMasVendidos: boolean = false;
 
   form: FormGroup = new FormGroup({
     nombreProducto: new FormControl(''),
@@ -50,10 +59,13 @@ export class ProductoComponent {
     private readonly marcaService: MarcaService,
     private readonly razaService: RazaService
   ) {
-    this.getProductos();
+    this.cargarFormulario();
+  }
+
+  ngOnInit(): void {
+    this.getProductos(); // Load main product list by default
     this.getMarcas();
     this.getRazas();
-    this.cargarFormulario();
   }
 
   getMarcas() {
@@ -95,6 +107,7 @@ export class ProductoComponent {
   }
 
   getProductos() {
+    this.mostrarProductosMasVendidos = false; // Hide most sold products view
     this.productoService.getProductos().subscribe({
       next: (data) => {
         this.productos = data;
@@ -103,6 +116,38 @@ export class ProductoComponent {
         console.log(error);
       }
     });
+  }
+
+  getProductosMasVendidos(): void {
+    this.msjSpinner = 'Cargando productos más vendidos...';
+    this.spinner.show();
+    this.mostrarProductosMasVendidos = true; // Show most sold products view
+    this.productos = []; // Clear main product list
+    this.productoService.getProductosMasVendidos(this.selectedDias, this.selectedLimit).subscribe({
+      next: (data) => {
+        this.productosMasVendidos = data;
+        this.spinner.hide();
+      },
+      error: (error) => {
+        this.spinner.hide();
+        this.messageUtils.showMessage('Error', 'No se pudieron cargar los productos más vendidos', 'error');
+        console.error('Error al cargar productos más vendidos:', error);
+      }
+    });
+  }
+
+  onMasVendidosChange(): void {
+    this.getProductosMasVendidos();
+  }
+
+  toggleProductosMasVendidos(): void {
+    if (this.mostrarProductosMasVendidos) {
+      // If currently showing most sold, switch back to main products
+      this.getProductos();
+    } else {
+      // If not showing most sold, switch to most sold products
+      this.getProductosMasVendidos();
+    }
   }
 
   crearModal(modoForm: string) {

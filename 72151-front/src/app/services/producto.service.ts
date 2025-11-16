@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Producto } from '../models/producto';
+import { ProductoMasVendido } from '../models/producto-mas-vendido';
 import { BackendService } from './backend.service';
 import { environment } from 'src/environments/environment';
 
@@ -34,6 +35,10 @@ export class ProductoService {
 
   eliminarProducto(id: number): Observable<any> {
     return this.backendService.post(environment.apiUrl, this.api, 'eliminar', { id_producto: id });
+  }
+
+  getProductosMasVendidos(dias: number, limit: number): Observable<ProductoMasVendido[]> {
+    return this.backendService.get(environment.apiUrl, this.api, `mas-salidas?dias=${dias}&limit=${limit}`);
   }
 }
 
