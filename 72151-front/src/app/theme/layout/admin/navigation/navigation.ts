@@ -67,7 +67,7 @@ export const NavigationItems: NavigationItem[] = [
         title: 'Inventario',
         type: 'item',
         url: '/inicio/inventario',
-        icon: 'feather icon-book',
+        icon: 'feather icon-package',
         classes: 'nav-item'
       }
     ]

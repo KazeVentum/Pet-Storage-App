@@ -1,6 +1,7 @@
 package com.uniminuto.biblioteca.api;
 
 import com.uniminuto.biblioteca.entity.Inventario;
+import com.uniminuto.biblioteca.entity.InventarioResumenDTO;
 import com.uniminuto.biblioteca.entity.ProductoBajoStockDTO;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
@@ -49,5 +50,13 @@ public interface InventarioApi {
             @RequestParam(defaultValue = "stock_actual") String sortBy,
             @RequestParam(defaultValue = "asc") String order,
             @RequestParam(defaultValue = "10") int limit
+    );
+
+    @GetMapping("/resumen")
+    ResponseEntity<List<InventarioResumenDTO>> resumenInventario(
+            @RequestParam(required = false) String ubicacion,
+            @RequestParam(required = false, defaultValue = "valor_inventario") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String order,
+            @RequestParam(required = false, defaultValue = "10") Integer limit
     );
 }

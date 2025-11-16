@@ -1,6 +1,7 @@
 package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.Inventario;
+import com.uniminuto.biblioteca.entity.InventarioResumenDTO;
 import com.uniminuto.biblioteca.entity.Producto;
 import com.uniminuto.biblioteca.entity.ProductoBajoStockDTO;
 import com.uniminuto.biblioteca.entity.Ubicacion;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -131,5 +134,49 @@ public class InventarioServiceImpl implements InventarioService {
         Pageable pageable = PageRequest.of(0, limit, Sort.by(direction, sortField));
 
         return inventarioRepository.findProductosConBajoStock(ubicacion, pageable);
+    }
+
+    @Override
+    public List<InventarioResumenDTO> resumenInventario(String ubicacion, String orderByClause, Integer limit) {
+        // Validar y establecer valores por defecto
+        String actualSortBy;
+        String sortBy = orderByClause.split(" ")[0]; // Extract sortBy from orderByClause
+        String order = orderByClause.split(" ")[1]; // Extract order from orderByClause
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            switch (sortBy) {
+                case "total_bultos":
+                    actualSortBy = "totalBultos";
+                    break;
+                case "nombre_ubicacion":
+                    actualSortBy = "nombreUbicacion";
+                    break;
+                default:
+                    actualSortBy = "valorInventario";
+                    break;
+            }
+        } else {
+            actualSortBy = "valorInventario";
+        }
+
+        String actualOrder = "DESC";
+        if (order != null && !order.isEmpty() && order.equalsIgnoreCase("ASC")) {
+            actualOrder = "ASC";
+        }
+
+        String finalOrderByClause = actualSortBy + " " + actualOrder;
+
+        Integer queryLimit = (limit != null && limit > 0) ? limit : 100; // Límite por defecto
+
+        List<Object[]> results = inventarioRepository.resumenInventario(ubicacion, finalOrderByClause, queryLimit);
+        List<InventarioResumenDTO> dtoList = new ArrayList<>();
+
+        for (Object[] result : results) {
+            String nombreUbicacion = (String) result[0];
+            Long totalBultos = ((Number) result[1]).longValue();
+            BigDecimal valorInventario = (BigDecimal) result[2];
+            dtoList.add(new InventarioResumenDTO(nombreUbicacion, totalBultos, valorInventario));
+        }
+        return dtoList;
     }
 }
