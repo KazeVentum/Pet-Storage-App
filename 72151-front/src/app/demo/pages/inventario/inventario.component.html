@@ -8,24 +8,56 @@
       <div class="input-group">
         <label class="input-group-text" for="ubicacionSelect">Sede</label>
         <select class="form-select" id="ubicacionSelect" [(ngModel)]="selectedUbicacion" (ngModelChange)="onUbicacionChange()">
+          <option [ngValue]="-1">Todas</option>
           <option [ngValue]="null" disabled>Seleccione una ubicación</option>
           <option *ngFor="let u of ubicaciones" [ngValue]="u.idDireccion">{{ u.nombreUbicacion }}</option>
         </select>
       </div>
     </div>
     <div class="col-md-6 text-end">
+      <button class="btn btn-info me-2" (click)="mostrarResumenInventario()">
+        <i class="fas fa-chart-pie"></i> Resumen de Inventario
+      </button>
       <button class="btn btn-warning" (click)="mostrarProductosBajoStock()">
         <i class="fas fa-exclamation-triangle"></i> Productos con Bajo Stock
       </button>
     </div>
   </div>
 
-  <div *ngIf="inventarios.length === 0" class="text-center mt-5">
-    <h4>No hay productos en el inventario para mostrar.</h4>
-    <p>Seleccione una sede o verifique los productos con bajo stock.</p>
+  <div *ngIf="mostrarResumen" class="row">
+    <div class="col-12 mb-3">
+      <h5 class="card-title mb-0">Resumen de Inventario por Ubicación</h5>
+    </div>
+    <div *ngFor="let resumen of inventarioResumen" class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="card-title mb-0">{{ resumen.nombreUbicacion }}</h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Total Bultos:
+              <span class="badge bg-primary rounded-pill summary-value">{{ resumen.totalBultos }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Valor Inventario:
+              <span class="badge bg-success summary-value">{{ resumen.valorInventario | currency:'USD':'symbol':'1.0-2' }}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="card-footer text-center">
+          <button class="btn btn-primary btn-sm" (click)="verDetalleUbicacion(resumen.idDireccion)">Ver Detalle</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div *ngIf="inventarios.length > 0" class="row">
+  <div *ngIf="inventarios.length === 0 && !mostrarResumen && !isLowStockView && selectedUbicacion !== null" class="text-center mt-5">
+    <h4>No hay productos en el inventario para mostrar para la ubicación seleccionada.</h4>
+    <p>Seleccione otra sede o verifique los productos con bajo stock.</p>
+  </div>
+
+  <div *ngIf="inventarios.length > 0 && !mostrarResumen" class="row">
     <div *ngFor="let item of inventarios" class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
       <div class="card h-100">
         <div class="card-header">

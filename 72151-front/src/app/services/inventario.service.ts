@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Inventario } from '../models/inventario';
+import { InventarioResumen } from '../models/inventario-resumen';
 import { BackendService } from './backend.service';
 import { environment } from 'src/environments/environment';
 
@@ -22,5 +23,13 @@ export class InventarioService {
 
   listarProductosBajoStock(): Observable<Inventario[]> {
     return this.backendService.get(environment.apiUrl, this.api, 'productos-bajo-stock');
+  }
+
+  obtenerResumenInventario(): Observable<InventarioResumen[]> {
+    return this.backendService.get(environment.apiUrl, this.api, 'resumen');
+  }
+
+  listarTodosLosInventarios(): Observable<Inventario[]> {
+    return this.backendService.get(environment.apiUrl, this.api, 'listar');
   }
 }

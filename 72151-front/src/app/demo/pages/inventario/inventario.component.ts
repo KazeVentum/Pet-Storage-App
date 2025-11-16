@@ -6,6 +6,7 @@ import { InventarioService } from 'src/app/services/inventario.service';
 import { UbicacionService } from 'src/app/services/ubicacion.service';
 import { Inventario } from 'src/app/models/inventario';
 import { Ubicacion } from 'src/app/models/ubicacion';
+import { InventarioResumen } from 'src/app/models/inventario-resumen';
 import { MessageUtils } from 'src/app/utils/message-utils';
 
 @Component({
@@ -18,16 +19,18 @@ import { MessageUtils } from 'src/app/utils/message-utils';
 export class InventarioComponent implements OnInit {
   inventarios: Inventario[] = [];
   ubicaciones: Ubicacion[] = [];
-  selectedUbicacion: number | null = null;
+  selectedUbicacion: number | null = -1; // Default to -1 for "Todas"
   msjSpinner: string = 'Cargando...';
   isLowStockView: boolean = false;
+  inventarioResumen: InventarioResumen[] = [];
+  mostrarResumen: boolean = false;
 
   constructor(
     private readonly inventarioService: InventarioService,
     private readonly ubicacionService: UbicacionService,
     private readonly spinner: NgxSpinnerService,
     private readonly messageUtils: MessageUtils
-  ) {}
+  ){}
 
   ngOnInit(): void {
     this.cargarUbicaciones();
@@ -39,12 +42,8 @@ export class InventarioComponent implements OnInit {
       next: (data) => {
         this.ubicaciones = data;
         console.log('Ubicaciones cargadas:', this.ubicaciones);
-        if (this.ubicaciones.length > 0 && this.ubicaciones[0].idDireccion) {
-          this.selectedUbicacion = this.ubicaciones[0].idDireccion;
-          this.onUbicacionChange();
-        } else {
-          this.spinner.hide();
-        }
+        this.spinner.hide();
+        this.mostrarResumenInventario(); // Call summary AFTER ubicaciones are loaded
       },
       error: (error) => {
         this.spinner.hide();
@@ -54,9 +53,58 @@ export class InventarioComponent implements OnInit {
     });
   }
 
+  cargarTodosLosInventarios(): void {
+    this.isLowStockView = false;
+    this.mostrarResumen = false;
+    this.spinner.show();
+    this.inventarioService.listarTodosLosInventarios().subscribe({
+      next: (data) => {
+        this.inventarios = data;
+        console.log('Todos los inventarios cargados:', this.inventarios);
+        this.spinner.hide();
+      },
+      error: (error) => {
+        this.spinner.hide();
+        this.messageUtils.showMessage('Error', 'No se pudieron cargar todos los inventarios', 'error');
+        console.error('Error al cargar todos los inventarios:', error);
+      }
+    });
+  }
+
+  mostrarResumenInventario(): void {
+    this.isLowStockView = false;
+    this.inventarios = []; // Clear other views
+    this.selectedUbicacion = -1; // Set to -1 for "Todas" when summary is active
+    this.mostrarResumen = true;
+    this.spinner.show();
+    this.inventarioService.obtenerResumenInventario().subscribe({
+      next: (data) => {
+        this.inventarioResumen = data.map(resumen => {
+          const ubicacion = this.ubicaciones.find(u => u.nombreUbicacion === resumen.nombreUbicacion);
+          return {
+            ...resumen,
+            idDireccion: ubicacion ? ubicacion.idDireccion : undefined // Assign idDireccion if found
+          };
+        });
+        console.log('Resumen de Inventario cargado:', this.inventarioResumen);
+        this.spinner.hide();
+      },
+      error: (error) => {
+        this.spinner.hide();
+        this.messageUtils.showMessage('Error', 'No se pudo cargar el resumen de inventario', 'error');
+        console.error('Error al cargar resumen de inventario:', error);
+      }
+    });
+  }
+
   onUbicacionChange(): void {
-    if (this.selectedUbicacion) {
-      this.isLowStockView = false;
+    this.isLowStockView = false;
+    this.mostrarResumen = false; // Hide summary when a specific location is selected or "Todas"
+    this.inventarios = []; // Clear current inventory display
+
+    if (this.selectedUbicacion === -1) {
+      this.cargarTodosLosInventarios();
+    } else if (this.selectedUbicacion !== null) {
       this.spinner.show();
       this.inventarioService.listarInventariosPorUbicacion(this.selectedUbicacion).subscribe({
         next: (data) => {
@@ -71,13 +119,16 @@ export class InventarioComponent implements OnInit {
         }
       });
     } else {
-      this.inventarios = [];
+      // If selectedUbicacion is null (e.g., "Seleccione una ubicación" disabled option), show summary
+      this.mostrarResumenInventario();
     }
   }
 
   mostrarProductosBajoStock(): void {
     this.isLowStockView = true;
-    this.selectedUbicacion = null;
+    this.mostrarResumen = false; 
+    this.selectedUbicacion = null; 
+    this.inventarios = []; 
     this.spinner.show();
     this.inventarioService.listarProductosBajoStock().subscribe({
       next: (data) => {
@@ -91,6 +142,16 @@ export class InventarioComponent implements OnInit {
         console.error('Error al cargar productos bajo stock:', error);
       }
     });
+  }
+
+  verDetalleUbicacion(ubicacionId: number): void {
+    if (ubicacionId !== null && ubicacionId !== undefined) {
+      this.selectedUbicacion = ubicacionId;
+      this.onUbicacionChange();
+    } else {
+      console.error('Error: ID de ubicación no válido para ver detalle.', ubicacionId);
+      this.messageUtils.showMessage('Error', 'No se pudo obtener el detalle de la ubicación. ID no válido.', 'error');
+    }
   }
 
   getStockStatusColor(item: Inventario): string {
@@ -108,8 +169,8 @@ export class InventarioComponent implements OnInit {
       if (this.isLowStockView) {
         return item.ubicacion?.nombreUbicacion || 'N/A';
       } else {
-        if (this.selectedUbicacion === null || this.selectedUbicacion === undefined) {
-          return 'N/A';
+        if (this.selectedUbicacion === null || this.selectedUbicacion === undefined || this.selectedUbicacion === -1) {
+          return item.ubicacion?.nombreUbicacion || 'N/A'; // For "Todas" or summary, show item's location
         }
         const ubicacion = this.ubicaciones.find(u => u.idDireccion === this.selectedUbicacion);
         return ubicacion?.nombreUbicacion || 'N/A';
