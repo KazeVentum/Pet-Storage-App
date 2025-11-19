@@ -7,16 +7,20 @@
             <i class="fa fa-plus"></i>
             &nbsp;Nueva Raza
           </button>
+          <button class="btn btn-outline-info btn-sm ms-2" (click)="abrirTopRazasModal()" title="Ver Top 5 Razas con Más Inventario">
+            <i class="fa fa-chart-bar"></i>
+            &nbsp;Top Inventario
+          </button>
         </div>
       </div>
     </div>
     <div class="card-body">
       <div class="row">
-        <div class="col">
+        <div class="col"> <!-- Reverted to single col -->
           <div class="card">
             <div class="card-body">
-              <div class="table table-responsive">
-                <table class="table table-responsive table-stripped">
+              <div class="table-responsive">
+                <table class="table table-stripped">
                   <thead>
                     <tr>
                       <th>Nombre</th>
@@ -112,3 +116,42 @@
   </div>
 </div>
 
+<!-- New Modal for Top Razas Inventario -->
+<div class="modal fade" id="topRazasInventarioModal" tabindex="-1" aria-labelledby="topRazasInventarioModalLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="topRazasInventarioModalLabel">Top 5 Razas con Más Inventario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-stripped">
+            <thead>
+              <tr>
+                <th>Raza</th>
+                <th>Total en Inventario</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="topRazasInventario.length === 0">
+              <tr>
+                <td colspan="2" class="text-center">No hay datos de inventario disponibles.</td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="topRazasInventario.length > 0">
+              <tr *ngFor="let item of topRazasInventario">
+                <td>{{ item.nombreRaza }}</td>
+                <td>
+                  <span class="badge bg-primary">{{ item.totalStock }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

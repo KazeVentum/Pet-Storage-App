@@ -69,6 +69,14 @@ export const NavigationItems: NavigationItem[] = [
         url: '/inicio/inventario',
         icon: 'feather icon-package',
         classes: 'nav-item'
+      },
+      {
+        id: 'pedidos-compra',
+        title: 'Pedidos de Compra',
+        type: 'item',
+        url: '/inicio/pedidos-compra',
+        icon: 'feather icon-shopping-cart', // Using a shopping cart icon
+        classes: 'nav-item'
       }
     ]
   },

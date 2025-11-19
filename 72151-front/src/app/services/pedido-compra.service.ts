@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PedidoCompra } from '../models/pedido-compra';
+import { PedidoCompraDetalle } from '../models/pedido-compra-detalle'; // New import
 import { BackendService } from './backend.service';
 import { environment } from 'src/environments/environment';
 
@@ -22,6 +23,10 @@ export class PedidoCompraService {
 
   getPedidosPorEstado(estado: string): Observable<PedidoCompra[]> {
     return this.backendService.get(environment.apiUrl, this.api, `listar-por-estado/${estado}`);
+  }
+
+  getPedidosDetallePorEstado(estado: string): Observable<PedidoCompraDetalle[]> { // New method
+    return this.backendService.get(environment.apiUrl, this.api, `listar-detalle-por-estado/${estado}`);
   }
 
   guardarPedido(pedido: PedidoCompra): Observable<any> {

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MessageUtils } from 'src/app/utils/message-utils';
 import { RazaService } from 'src/app/services/raza.service';
 import { Raza } from 'src/app/models/raza';
+import { RazaInventario } from 'src/app/models/raza-inventario';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 
 declare const bootstrap: any;
@@ -15,9 +16,11 @@ declare const bootstrap: any;
   templateUrl: './raza.component.html',
   styleUrl: './raza.component.scss'
 })
-export class RazaComponent {
+export class RazaComponent implements OnInit {
   razas: Raza[] = [];
-  modalInstance: any;
+  topRazasInventario: RazaInventario[] = [];
+  modalInstance: any; // For crearRazaModal
+  topRazasModalInstance: any; // For topRazasInventarioModal
   modoFormulario: string = '';
   titleModal: string = '';
   razaSelected: Raza;
@@ -34,7 +37,11 @@ export class RazaComponent {
       tamano: ['', [Validators.required]],
       activo: [true]
     });
+  }
+
+  ngOnInit(): void {
     this.cargarListaRazas();
+    // this.cargarTopRazas(); // Removed automatic call
   }
 
   cargarListaRazas() {
@@ -47,6 +54,27 @@ export class RazaComponent {
         this.messageUtils.showMessage('Error', 'No se pudieron cargar las razas', 'error');
       }
     });
+  }
+
+  cargarTopRazas() {
+    this.razaService.getTop5RazasByInventario().subscribe({
+      next: (data) => {
+        this.topRazasInventario = data;
+      },
+      error: (error) => {
+        console.log(error);
+        this.messageUtils.showMessage('Error', 'No se pudieron cargar el top de razas por inventario', 'error');
+      }
+    });
+  }
+
+  abrirTopRazasModal() { // New method to open the top razas modal
+    this.cargarTopRazas(); // Load data before opening the modal
+    const modalElement = document.getElementById('topRazasInventarioModal');
+    if (modalElement) {
+      this.topRazasModalInstance ??= new bootstrap.Modal(modalElement);
+      this.topRazasModalInstance.show();
+    }
   }
 
   crearRazaModal(modoForm: string) {
@@ -65,7 +93,7 @@ export class RazaComponent {
     }
   }
 
-  cerrarModal() {
+  cerrarModal() { // This closes the crearRazaModal
     this.form.reset();
     this.form.markAsPristine();
     this.form.markAsUntouched();

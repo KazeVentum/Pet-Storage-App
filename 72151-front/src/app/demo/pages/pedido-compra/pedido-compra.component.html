@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Pedidos de Compra Detallados por Estado</h5>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="estadoSelect" class="form-label">Seleccionar Estado:</label>
+        <select class="form-select" id="estadoSelect" [(ngModel)]="selectedEstado" (change)="onEstadoChange($event)">
+          <option *ngFor="let estado of estados" [value]="estado">{{ estado | titlecase }}</option>
+        </select>
+      </div>
+
+      <div class="table-responsive mt-4">
+        <table class="table table-stripped table-hover">
+          <thead>
+            <tr>
+              <th>Fecha Pedido</th>
+              <th>Proveedor</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="pedidosDetalle.length === 0">
+            <tr>
+              <td colspan="2" class="text-center">No hay pedidos disponibles para este estado.</td> <!-- colspan adjusted -->
+            </tr>
+          </tbody>
+          <tbody *ngIf="pedidosDetalle.length > 0">
+            <tr *ngFor="let pedido of pedidosDetalle">
+              <td>{{ pedido.fechaPedido | date:'d \'de\' MMM yyyy' }}</td>
+              <td>
+                <p class="mb-0 fw-bold">{{ pedido.nombreProveedor }}</p>
+                <small class="d-block text-muted">{{ pedido.telefonoProveedor }}</small>
+                <small class="d-block text-muted">{{ pedido.emailProveedor }}</small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

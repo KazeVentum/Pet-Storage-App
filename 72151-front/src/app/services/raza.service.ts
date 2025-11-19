@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Raza } from '../models/raza';
+import { RazaInventario } from '../models/raza-inventario'; // New import
 import { BackendService } from './backend.service';
 import { environment } from 'src/environments/environment';
 
@@ -30,6 +31,10 @@ export class RazaService {
 
   eliminarRaza(id: number): Observable<any> {
     return this.backendService.post(environment.apiUrl, this.api, 'eliminar', { id_raza: id });
+  }
+
+  getTop5RazasByInventario(): Observable<RazaInventario[]> {
+    return this.backendService.get(environment.apiUrl, this.api, 'top-inventario');
   }
 }
 
