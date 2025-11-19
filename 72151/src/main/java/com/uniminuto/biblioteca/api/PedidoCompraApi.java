@@ -1,6 +1,7 @@
 package com.uniminuto.biblioteca.api;
 
 import com.uniminuto.biblioteca.entity.PedidoCompra;
+import com.uniminuto.biblioteca.entity.PedidoCompraDetalleDTO; // New import
 import java.util.List;
 import java.util.Map;
 import org.apache.coyote.BadRequestException;
@@ -28,6 +29,11 @@ public interface PedidoCompraApi {
             produces = {"application/json"},
             method = RequestMethod.GET)
     ResponseEntity<List<PedidoCompra>> listarPedidosPorEstado(@PathVariable("estado") String estado) throws BadRequestException;
+    
+    @RequestMapping(value = "/listar-detalle-por-estado/{estado}", // New endpoint
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<PedidoCompraDetalleDTO>> listarPedidosDetallePorEstado(@PathVariable("estado") String estado) throws BadRequestException;
     
     @RequestMapping(value = "/guardar",
             produces = {"application/json"},

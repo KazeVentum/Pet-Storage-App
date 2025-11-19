@@ -2,6 +2,7 @@ package com.uniminuto.biblioteca.apicontroller;
 
 import com.uniminuto.biblioteca.api.PedidoCompraApi;
 import com.uniminuto.biblioteca.entity.PedidoCompra;
+import com.uniminuto.biblioteca.entity.PedidoCompraDetalleDTO; // New import
 import com.uniminuto.biblioteca.services.PedidoCompraService;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,11 @@ public class PedidoCompraApiController implements PedidoCompraApi {
     @Override
     public ResponseEntity<List<PedidoCompra>> listarPedidosPorEstado(String estado) throws BadRequestException {
         return ResponseEntity.ok(pedidoCompraService.listarPedidosPorEstado(estado));
+    }
+
+    @Override
+    public ResponseEntity<List<PedidoCompraDetalleDTO>> listarPedidosDetallePorEstado(String estado) throws BadRequestException {
+        return ResponseEntity.ok(pedidoCompraService.listarPedidosDetallePorEstado(estado));
     }
     
     @Override

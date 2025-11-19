@@ -1,12 +1,15 @@
 package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.Raza;
+import com.uniminuto.biblioteca.entity.RazaInventarioDTO;
 import com.uniminuto.biblioteca.repository.RazaRepository;
 import com.uniminuto.biblioteca.services.RazaService;
 import java.util.List;
 import java.util.Optional;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -57,6 +60,12 @@ public class RazaServiceImpl implements RazaService {
             throw new BadRequestException("No se encuentra la raza con el id = " + idRaza);
         }
         razaRepository.deleteById(idRaza);
+    }
+    
+    @Override
+    public List<RazaInventarioDTO> findTop5RazasByInventario() throws BadRequestException {
+        Pageable top5 = PageRequest.of(0, 5);
+        return razaRepository.findTopRazasByStock(top5);
     }
 }
 

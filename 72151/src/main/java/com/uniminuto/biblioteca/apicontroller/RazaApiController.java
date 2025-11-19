@@ -2,6 +2,7 @@ package com.uniminuto.biblioteca.apicontroller;
 
 import com.uniminuto.biblioteca.api.RazaApi;
 import com.uniminuto.biblioteca.entity.Raza;
+import com.uniminuto.biblioteca.entity.RazaInventarioDTO;
 import com.uniminuto.biblioteca.services.RazaService;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
@@ -40,6 +41,11 @@ public class RazaApiController implements RazaApi {
         Integer idRaza = ((Number) request.get("id_raza")).intValue();
         razaService.eliminarRaza(idRaza);
         return ResponseEntity.ok().build();
+    }
+    
+    @Override
+    public ResponseEntity<List<RazaInventarioDTO>> findTop5RazasByInventario() throws BadRequestException {
+        return ResponseEntity.ok(razaService.findTop5RazasByInventario());
     }
 }
 

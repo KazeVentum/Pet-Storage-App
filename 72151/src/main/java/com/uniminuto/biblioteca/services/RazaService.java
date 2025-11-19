@@ -1,6 +1,7 @@
 package com.uniminuto.biblioteca.services;
 
 import com.uniminuto.biblioteca.entity.Raza;
+import com.uniminuto.biblioteca.entity.RazaInventarioDTO;
 import java.util.List;
 import org.apache.coyote.BadRequestException;
 
@@ -10,5 +11,6 @@ public interface RazaService {
     Raza guardarRaza(Raza raza) throws BadRequestException;
     Raza actualizarRaza(Raza raza) throws BadRequestException;
     void eliminarRaza(Integer idRaza) throws BadRequestException;
+    List<RazaInventarioDTO> findTop5RazasByInventario() throws BadRequestException;
 }
 

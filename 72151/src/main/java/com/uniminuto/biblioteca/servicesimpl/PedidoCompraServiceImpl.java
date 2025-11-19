@@ -2,6 +2,7 @@ package com.uniminuto.biblioteca.servicesimpl;
 
 import com.uniminuto.biblioteca.entity.DetallePedido;
 import com.uniminuto.biblioteca.entity.PedidoCompra;
+import com.uniminuto.biblioteca.entity.PedidoCompraDetalleDTO; // New import
 import com.uniminuto.biblioteca.entity.Proveedor;
 import com.uniminuto.biblioteca.repository.PedidoCompraRepository;
 import com.uniminuto.biblioteca.repository.ProveedorRepository;
@@ -40,10 +41,20 @@ public class PedidoCompraServiceImpl implements PedidoCompraService {
     @Override
     public List<PedidoCompra> listarPedidosPorEstado(String estado) throws BadRequestException {
         try {
-            PedidoCompra.EstadoPedido estadoEnum = PedidoCompra.EstadoPedido.valueOf(estado);
+            PedidoCompra.EstadoPedido estadoEnum = PedidoCompra.EstadoPedido.valueOf(estado.toLowerCase()); // Added toLowerCase for robustness
             return pedidoCompraRepository.findByEstado(estadoEnum);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Estado inválido: " + estado);
+        }
+    }
+
+    @Override
+    public List<PedidoCompraDetalleDTO> listarPedidosDetallePorEstado(String estado) throws BadRequestException {
+        try {
+            PedidoCompra.EstadoPedido estadoEnum = PedidoCompra.EstadoPedido.valueOf(estado.toLowerCase()); // Added toLowerCase for robustness
+            return pedidoCompraRepository.findDetalleByEstado(estadoEnum);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Estado inválido para el detalle de pedidos: " + estado);
         }
     }
     
