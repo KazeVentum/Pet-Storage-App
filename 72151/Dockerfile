@@ -7,7 +7,7 @@ WORKDIR /app
 COPY pom.xml .
 
 # Descargar dependencias (se cachea si no cambia el pom.xml)
-RUN mvn dependency:go-offline -B
+RUN mvn dependency:go-offline -B -Djava.net.preferIPv4Stack=true
 
 # Copiar el código fuente
 COPY src ./src
