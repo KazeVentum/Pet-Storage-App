@@ -63,7 +63,7 @@ public class MovimientoInventarioServiceImpl implements MovimientoInventarioServ
         if (movimiento.getTipoMovimiento() == null || movimiento.getTipoMovimiento().getIdTipoMov() == null) {
             throw new BadRequestException("El tipo de movimiento es obligatorio");
         }
-        if (movimiento.getCantidadBultoa() == null || movimiento.getCantidadBultoa() <= 0) {
+        if (movimiento.getCantidad() == null || movimiento.getCantidad() <= 0) {
             throw new BadRequestException("La cantidad debe ser mayor a cero");
         }
         
@@ -109,12 +109,12 @@ public class MovimientoInventarioServiceImpl implements MovimientoInventarioServ
         
         if (nombreTipo != null) {
             if (nombreTipo.equals("entrada") || nombreTipo.equals("compra") || nombreTipo.equals("ajuste_positivo")) {
-                inventario.setStockActual(inventario.getStockActual() + movimiento.getCantidadBultoa());
+                inventario.setStockActual(inventario.getStockActual() + movimiento.getCantidad());
             } else if (nombreTipo.equals("salida") || nombreTipo.equals("venta") || nombreTipo.equals("ajuste_negativo")) {
-                if (inventario.getStockActual() < movimiento.getCantidadBultoa()) {
-                    throw new BadRequestException("No hay suficiente stock. Stock actual: " + inventario.getStockActual() + ", cantidad solicitada: " + movimiento.getCantidadBultoa());
+                if (inventario.getStockActual() < movimiento.getCantidad()) {
+                    throw new BadRequestException("No hay suficiente stock. Stock actual: " + inventario.getStockActual() + ", cantidad solicitada: " + movimiento.getCantidad());
                 }
-                inventario.setStockActual(inventario.getStockActual() - movimiento.getCantidadBultoa());
+                inventario.setStockActual(inventario.getStockActual() - movimiento.getCantidad());
             }
             inventarioRepository.save(inventario);
         }

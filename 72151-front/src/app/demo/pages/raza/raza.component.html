@@ -34,7 +34,7 @@
                     <tr *ngFor="let raza of razas">
                       <td>{{ raza.nombreRaza }}</td>
                       <td>
-                        <span class="badge bg-info">{{ raza.tamano }}</span>
+                        <span class="badge bg-info">{{ raza.tamano === 'pequenio' ? 'pequeño' : raza.tamano }}</span>
                       </td>
                       <td>
                         <span [class]="'badge bg-' + (raza.activo ? 'success' : 'danger')">
@@ -85,7 +85,7 @@
             <label for="tamano" class="form-label">Tamaño</label>
             <select class="form-select" formControlName="tamano">
               <option value="">Seleccione un tamaño</option>
-              <option value="pequeño">Pequeño</option>
+              <option value="pequenio">pequeño</option>
               <option value="mediano">Mediano</option>
               <option value="grande">Grande</option>
             </select>

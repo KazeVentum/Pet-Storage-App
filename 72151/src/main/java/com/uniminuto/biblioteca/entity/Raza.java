@@ -34,7 +34,7 @@ public class Raza implements Serializable {
     private Boolean activo;
     
     public enum TamanoRaza {
-        pequeño, mediano, grande
+        pequenio, mediano, grande
     }
 }
 

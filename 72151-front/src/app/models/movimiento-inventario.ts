@@ -10,7 +10,7 @@ export class MovimientoInventario {
     id_tipo_mov: number;
     id_direccion_origen?: number;
     id_direccion_destino?: number;
-    cantidad_bultoa: number;
+    cantidad: number;
     fecha_movimiento?: Date;
     inventario?: Inventario;
     tipo_movimiento?: TipoMovimiento;

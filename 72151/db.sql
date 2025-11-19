@@ -23,7 +23,7 @@ CREATE TABLE MARCAS (
 CREATE TABLE RAZAS (
     id_raza INT AUTO_INCREMENT PRIMARY KEY,
     nombre_raza VARCHAR(100) NOT NULL,
-    tamano ENUM('pequeño', 'mediano', 'grande') NOT NULL,
+    tamano ENUM('pequenio', 'mediano', 'grande') NOT NULL,
     activo BOOLEAN DEFAULT TRUE,
     INDEX idx_nombre_raza (nombre_raza),
     INDEX idx_tamano (tamano)
@@ -159,7 +159,7 @@ CREATE TABLE MOVIMIENTOS_INVENTARIO (
     id_tipo_mov INT NOT NULL,
     id_direccion_origen INT,
     id_direccion_destino INT,
-    cantidad_bultoa INT NOT NULL,
+    cantidad INT NOT NULL,
     fecha_movimiento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_mov_inventario FOREIGN KEY (id_inventario) REFERENCES INVENTARIO(id_inventario) ON DELETE RESTRICT,
     CONSTRAINT fk_mov_usuario FOREIGN KEY (id_usuario) REFERENCES USUARIOS(id_usuario) ON DELETE RESTRICT,
@@ -172,66 +172,8 @@ CREATE TABLE MOVIMIENTOS_INVENTARIO (
     INDEX idx_fecha_movimiento (fecha_movimiento),
     INDEX idx_origen (id_direccion_origen),
     INDEX idx_destino (id_direccion_destino),
-    CHECK (cantidad_bultoa > 0)
+    CHECK (cantidad > 0)
 ) ENGINE=InnoDB;
-
--- ============================================
--- TRIGGERS PARA INTEGRIDAD DE DATOS
--- ============================================
-
-DELIMITER //
-
--- Trigger: Actualizar total del pedido al insertar detalle
-CREATE TRIGGER trg_actualizar_total_pedido_insert
-AFTER INSERT ON DETALLE_PEDIDOS
-FOR EACH ROW
-BEGIN
-    UPDATE PEDIDOS_COMPRA 
-    SET total = (
-        SELECT SUM(subtotal) 
-        FROM DETALLE_PEDIDOS 
-        WHERE id_pedido = NEW.id_pedido
-    )
-    WHERE id_pedido = NEW.id_pedido;
-END//
-
--- Trigger: Actualizar total del pedido al modificar detalle
-CREATE TRIGGER trg_actualizar_total_pedido_update
-AFTER UPDATE ON DETALLE_PEDIDOS
-FOR EACH ROW
-BEGIN
-    UPDATE PEDIDOS_COMPRA 
-    SET total = (
-        SELECT SUM(subtotal) 
-        FROM DETALLE_PEDIDOS 
-        WHERE id_pedido = NEW.id_pedido
-    )
-    WHERE id_pedido = NEW.id_pedido;
-END//
-
--- Trigger: Actualizar stock en movimiento de entrada
-CREATE TRIGGER trg_movimiento_entrada
-AFTER INSERT ON MOVIMIENTOS_INVENTARIO
-FOR EACH ROW
-BEGIN
-    DECLARE tipo_nombre VARCHAR(50);
-    
-    SELECT nombre_tipo INTO tipo_nombre 
-    FROM TIPO_MOVIMIENTO 
-    WHERE id_tipo_mov = NEW.id_tipo_mov;
-    
-    IF tipo_nombre IN ('entrada', 'compra', 'ajuste_positivo') THEN
-        UPDATE INVENTARIO 
-        SET stock_actual = stock_actual + NEW.cantidad_bultoa
-        WHERE id_inventario = NEW.id_inventario;
-    ELSEIF tipo_nombre IN ('salida', 'venta', 'ajuste_negativo') THEN
-        UPDATE INVENTARIO 
-        SET stock_actual = stock_actual - NEW.cantidad_bultoa
-        WHERE id_inventario = NEW.id_inventario;
-    END IF;
-END//
-
-DELIMITER ;
 
 -- ============================================
 -- DATOS INICIALES
@@ -249,58 +191,6 @@ INSERT INTO TIPO_MOVIMIENTO (nombre_tipo, descripcion) VALUES
 -- Usuario administrador inicial
 INSERT INTO USUARIOS (nombre, correo, password) VALUES
 ('Administrador', 'admin@sistema.com', SHA2('admin123', 256));
-
--- ============================================
--- VISTAS ÚTILES
--- ============================================
-
--- Vista: Productos con bajo stock
-CREATE VIEW v_productos_bajo_stock AS
-SELECT 
-    p.id_producto,
-    p.nombre_producto,
-    i.stock_actual,
-    i.stock_minimo,
-    u.nombre_ubicacion,
-    m.nombre_marca
-FROM INVENTARIO i
-INNER JOIN PRODUCTOS p ON i.id_producto = p.id_producto
-INNER JOIN UBICACIONES u ON i.id_direccion = u.id_direccion
-INNER JOIN MARCAS m ON p.id_marca = m.id_marca
-WHERE i.stock_actual <= i.stock_minimo;
-
--- Vista: Resumen de pedidos
-CREATE VIEW v_resumen_pedidos AS
-SELECT 
-    pc.id_pedido,
-    pc.fecha_pedido,
-    pc.estado,
-    pr.nombre_proveedor,
-    pc.total,
-    COUNT(dp.id_detalle) as total_items
-FROM PEDIDOS_COMPRA pc
-INNER JOIN PROVEEDORES pr ON pc.id_proveedor = pr.id_proveedor
-LEFT JOIN DETALLE_PEDIDOS dp ON pc.id_pedido = dp.id_pedido
-GROUP BY pc.id_pedido, pc.fecha_pedido, pc.estado, pr.nombre_proveedor, pc.total;
-
--- Vista: Movimientos de inventario con detalles
-CREATE VIEW v_movimientos_detallados AS
-SELECT 
-    mi.id_movimiento,
-    mi.fecha_movimiento,
-    tm.nombre_tipo,
-    p.nombre_producto,
-    mi.cantidad_bultoa,
-    u1.nombre_ubicacion as origen,
-    u2.nombre_ubicacion as destino,
-    us.nombre as usuario
-FROM MOVIMIENTOS_INVENTARIO mi
-INNER JOIN TIPO_MOVIMIENTO tm ON mi.id_tipo_mov = tm.id_tipo_mov
-INNER JOIN INVENTARIO inv ON mi.id_inventario = inv.id_inventario
-INNER JOIN PRODUCTOS p ON inv.id_producto = p.id_producto
-INNER JOIN USUARIOS us ON mi.id_usuario = us.id_usuario
-LEFT JOIN UBICACIONES u1 ON mi.id_direccion_origen = u1.id_direccion
-LEFT JOIN UBICACIONES u2 ON mi.id_direccion_destino = u2.id_direccion;
 
 -- ============================================
 -- ÍNDICES COMPUESTOS ADICIONALES PARA OPTIMIZACIÓN

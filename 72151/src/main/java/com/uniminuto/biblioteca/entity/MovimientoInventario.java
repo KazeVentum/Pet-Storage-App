@@ -44,8 +44,8 @@ public class MovimientoInventario implements Serializable {
     @JoinColumn(name = "id_direccion_destino")
     private Ubicacion ubicacionDestino;
     
-    @Column(name = "cantidad_bultoa", nullable = false)
-    private Integer cantidadBultoa;
+    @Column(name = "cantidad", nullable = false)
+    private Integer cantidad;
     
     @Column(name = "fecha_movimiento")
     private Timestamp fechaMovimiento;

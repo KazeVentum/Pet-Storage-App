@@ -1,19 +1,21 @@
 -- ============================================
 -- DATOS DE PRUEBA: Tienda de Comida para Mascotas
--- 3 Sucursales en Bogotá - CORREGIDO
+-- 3 Sucursales en Bogota - CORREGIDO
 -- ============================================
 
 USE sistema_inventario;
+
+-- Deshabilitar triggers temporalmente para evitar errores de recursión
+SET @ORIG_SQL_MODE=@@SQL_MODE;
+SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
 
 -- ============================================
 -- CORRECCIÓN DE TABLAS (ejecutar primero)
 -- ============================================
 
 -- Corregir ENUM de RAZAS
-ALTER TABLE RAZAS MODIFY COLUMN tamano ENUM('pequeño', 'mediano', 'grande') NOT NULL;
 
 -- Corregir ENUM de UBICACIONES
-ALTER TABLE UBICACIONES MODIFY COLUMN tipo_ubicacion ENUM('almacen', 'tienda', 'bodega') NOT NULL;
 
 -- ============================================
 -- MARCAS
@@ -34,17 +36,17 @@ INSERT INTO MARCAS (nombre_marca) VALUES
 -- RAZAS
 -- ============================================
 INSERT INTO RAZAS (nombre_raza, tamano) VALUES
-('Chihuahua', 'pequeño'),
-('Poodle', 'pequeño'),
-('Schnauzer', 'pequeño'),
+('Chihuahua', 'pequenio'),
+('Poodle', 'pequenio'),
+('Schnauzer', 'pequenio'),
 ('Beagle', 'mediano'),
 ('Bulldog', 'mediano'),
 ('Cocker Spaniel', 'mediano'),
 ('Labrador', 'grande'),
 ('Golden Retriever', 'grande'),
-('Pastor Alemán', 'grande'),
+('Pastor Aleman', 'grande'),
 ('Rottweiler', 'grande'),
-('Mixto Pequeño', 'pequeño'),
+('Mixto Pequeno', 'pequenio'),
 ('Mixto Mediano', 'mediano'),
 ('Mixto Grande', 'grande');
 
@@ -54,7 +56,7 @@ INSERT INTO RAZAS (nombre_raza, tamano) VALUES
 INSERT INTO PROVEEDORES (nombre_proveedor, telefono, email, activo) VALUES
 ('Distribuidora Pet Food Ltda', '601-7654321', 'ventas@petfoodltda.com', TRUE),
 ('Alimentos Mascotas Colombia', '601-8765432', 'pedidos@alimentosmascotas.co', TRUE),
-('Importadora Nestlé Purina', '601-3456789', 'distribucion@purina.com.co', TRUE),
+('Importadora Nestle Purina', '601-3456789', 'distribucion@purina.com.co', TRUE),
 ('Mayorista Canino S.A.S', '601-2345678', 'info@mayoristacanino.com', TRUE),
 ('Suministros Pet Center', '601-9876543', 'contacto@petcenter.co', TRUE);
 
@@ -62,18 +64,18 @@ INSERT INTO PROVEEDORES (nombre_proveedor, telefono, email, activo) VALUES
 -- UBICACIONES
 -- ============================================
 INSERT INTO UBICACIONES (id_ubicacion, tipo_ubicacion, nombre_ubicacion, responsable) VALUES
-('BOG-CHAPINERO', 'tienda', 'Sucursal Chapinero', 'Carlos Rodríguez'),
-('BOG-SUBA', 'tienda', 'Sucursal Suba', 'María González'),
-('BOG-KENNEDY', 'tienda', 'Sucursal Kennedy', 'Jorge Pérez'),
-('BOG-ALMACEN', 'almacen', 'Almacén Central Bogotá', 'Luis Martínez');
+('BOG-CHAPINERO', 'tienda', 'Sucursal Chapinero', 'Carlos Rodriguez'),
+('BOG-SUBA', 'tienda', 'Sucursal Suba', 'Maria Gonzalez'),
+('BOG-KENNEDY', 'tienda', 'Sucursal Kennedy', 'Jorge Perez'),
+('BOG-ALMACEN', 'almacen', 'Almacen Central Bogota', 'Luis Martinez');
 
 -- ============================================
 -- USUARIOS
 -- ============================================
 INSERT INTO USUARIOS (nombre, correo, password, activo) VALUES
-('Carlos Rodríguez', 'carlos.rodriguez@petshop.com', SHA2('carlos123', 256), TRUE),
-('María González', 'maria.gonzalez@petshop.com', SHA2('maria123', 256), TRUE),
-('Jorge Pérez', 'jorge.perez@petshop.com', SHA2('jorge123', 256), TRUE);
+('Carlos Rodriguez', 'carlos.rodriguez@petshop.com', SHA2('carlos123', 256), TRUE),
+('Maria Gonzalez', 'maria.gonzalez@petshop.com', SHA2('maria123', 256), TRUE),
+('Jorge Perez', 'jorge.perez@petshop.com', SHA2('jorge123', 256), TRUE);
 
 -- ============================================
 -- PRODUCTOS
@@ -81,38 +83,38 @@ INSERT INTO USUARIOS (nombre, correo, password, activo) VALUES
 INSERT INTO PRODUCTOS (nombre_producto, descripcion, precio_venta, precio_compra, estado, peso_kg, id_marca) VALUES
 -- Dog Chow
 ('Dog Chow Adultos Razas Medianas y Grandes 22kg', 'Alimento completo para perros adultos de razas medianas y grandes', 185000, 140000, 'activo', 22.00, 1),
-('Dog Chow Adultos Razas Pequeñas 8kg', 'Nutrición balanceada para razas pequeñas adultas', 75000, 58000, 'activo', 8.00, 1),
-('Dog Chow Cachorros 17kg', 'Fórmula especial para cachorros en crecimiento', 165000, 125000, 'activo', 17.00, 1),
-('Dog Chow Senior 8kg', 'Alimento para perros mayores de 7 años', 82000, 62000, 'activo', 8.00, 1),
+('Dog Chow Adultos Razas Pequenas 8kg', 'Nutricion balanceada para razas pequenas adultas', 75000, 58000, 'activo', 8.00, 1),
+('Dog Chow Cachorros 17kg', 'Formula especial para cachorros en crecimiento', 165000, 125000, 'activo', 17.00, 1),
+('Dog Chow Senior 8kg', 'Alimento para perros mayores de 7 anos', 82000, 62000, 'activo', 8.00, 1),
 
 -- Chunky
-('Chunky Adultos Carne y Cereales 30kg', 'Alimento económico con proteína de carne', 145000, 110000, 'activo', 30.00, 3),
+('Chunky Adultos Carne y Cereales 30kg', 'Alimento economico con proteina de carne', 145000, 110000, 'activo', 30.00, 3),
 ('Chunky Adultos Pollo y Arroz 25kg', 'Receta con pollo y arroz natural', 135000, 102000, 'activo', 25.00, 3),
-('Chunky Cachorros Pollo 15kg', 'Nutrición especial para cachorros', 98000, 74000, 'activo', 15.00, 3),
+('Chunky Cachorros Pollo 15kg', 'Nutricion especial para cachorros', 98000, 74000, 'activo', 15.00, 3),
 
 -- Pedigree
 ('Pedigree Adultos Razas Medianas 21kg', 'Alimento completo con vitaminas y minerales', 175000, 132000, 'activo', 21.00, 4),
-('Pedigree Adultos Razas Pequeñas 7kg', 'Croquetas pequeñas fáciles de masticar', 68000, 51000, 'activo', 7.00, 4),
+('Pedigree Adultos Razas Pequenas 7kg', 'Croquetas pequenas faciles de masticar', 68000, 51000, 'activo', 7.00, 4),
 ('Pedigree Cachorros Razas Medianas 15kg', 'Con DHA para desarrollo cerebral', 142000, 107000, 'activo', 15.00, 4),
 
 -- Royal Canin
-('Royal Canin Medium Adult 15kg', 'Nutrición premium para razas medianas', 285000, 215000, 'activo', 15.00, 5),
-('Royal Canin Mini Adult 7.5kg', 'Fórmula para perros pequeños', 165000, 125000, 'activo', 7.50, 5),
+('Royal Canin Medium Adult 15kg', 'Nutricion premium para razas medianas', 285000, 215000, 'activo', 15.00, 5),
+('Royal Canin Mini Adult 7.5kg', 'Formula para perros pequenos', 165000, 125000, 'activo', 7.50, 5),
 ('Royal Canin Maxi Adult 15kg', 'Para perros de razas grandes', 295000, 223000, 'activo', 15.00, 5),
 
 -- Pro Plan
-('Pro Plan Adult Complete 15kg', 'Nutrición científicamente avanzada', 245000, 185000, 'activo', 15.00, 6),
+('Pro Plan Adult Complete 15kg', 'Nutricion cientificamente avanzada', 245000, 185000, 'activo', 15.00, 6),
 ('Pro Plan Puppy Complete 15kg', 'Para cachorros de todas las razas', 255000, 193000, 'activo', 15.00, 6),
 
 -- Hills
-('Hills Science Diet Adult 12kg', 'Nutrición clínicamente probada', 275000, 208000, 'activo', 12.00, 7),
+('Hills Science Diet Adult 12kg', 'Nutricion clinicamente probada', 275000, 208000, 'activo', 12.00, 7),
 
 -- Max
-('Max Premium Adultos 25kg', 'Alimento balanceado económico', 125000, 95000, 'activo', 25.00, 9),
+('Max Premium Adultos 25kg', 'Alimento balanceado economico', 125000, 95000, 'activo', 25.00, 9),
 
 -- Cat Chow
 ('Cat Chow Adultos Pescado 8kg', 'Alimento completo para gatos adultos', 92000, 70000, 'activo', 8.00, 2),
-('Cat Chow Adultos Carne 3kg', 'Nutrición balanceada sabor carne', 42000, 32000, 'activo', 3.00, 2),
+('Cat Chow Adultos Carne 3kg', 'Nutricion balanceada sabor carne', 42000, 32000, 'activo', 3.00, 2),
 ('Cat Chow Gatitos 8kg', 'Desarrollo y crecimiento de gatitos', 98000, 74000, 'activo', 8.00, 2),
 
 -- Snacks
@@ -121,7 +123,7 @@ INSERT INTO PRODUCTOS (nombre_producto, descripcion, precio_venta, precio_compra
 ('Chunky Biscuits Sabores 800g', 'Galletas crujientes sabor pollo', 15000, 11000, 'activo', 0.80, 3),
 
 -- Accesorios
-('Mimaskot Shampoo Perros 500ml', 'Shampoo hipoalergénico pH balanceado', 28000, 21000, 'activo', 0.50, 10),
+('Mimaskot Shampoo Perros 500ml', 'Shampoo hipoalergenico pH balanceado', 28000, 21000, 'activo', 0.50, 10),
 ('Mimaskot Shampoo Gatos 500ml', 'Shampoo especial para felinos', 32000, 24000, 'activo', 0.50, 10),
 ('Mimaskot Antipulgas Pipeta x3', 'Tratamiento antipulgas y garrapatas', 35000, 26000, 'activo', 0.05, 10),
 ('Mimaskot Desparasitante Tabletas x4', 'Desparasitante interno amplio espectro', 28000, 21000, 'activo', 0.02, 10);
@@ -133,7 +135,7 @@ INSERT INTO PRODUCTOS (nombre_producto, descripcion, precio_venta, precio_compra
 INSERT INTO PRODUCTOS_RAZAS (id_producto, id_raza) VALUES
 (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 12), (1, 13);
 
--- Dog Chow Adultos Pequeñas (id_producto=2)
+-- Dog Chow Adultos Pequenas (id_producto=2)
 INSERT INTO PRODUCTOS_RAZAS (id_producto, id_raza) VALUES
 (2, 1), (2, 2), (2, 3), (2, 11);
 
@@ -270,7 +272,7 @@ INSERT INTO DETALLE_PEDIDOS (id_pedido, id_producto, cantidad_recibida, cantidad
 -- ============================================
 
 -- Entradas al almacén desde pedido 1
-INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad_bultoa, fecha_movimiento)
+INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad, fecha_movimiento)
 SELECT i.id_inventario, 1, 1, NULL, u.id_direccion, 50, '2025-10-15 10:30:00'
 FROM INVENTARIO i 
 JOIN UBICACIONES u ON i.id_direccion = u.id_direccion
@@ -287,7 +289,7 @@ JOIN UBICACIONES u ON i.id_direccion = u.id_direccion
 WHERE i.id_producto = 3 AND u.id_ubicacion = 'BOG-ALMACEN';
 
 -- Transferencias del almacén a Chapinero
-INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad_bultoa, fecha_movimiento)
+INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad, fecha_movimiento)
 SELECT i.id_inventario, 1, 3, 
     (SELECT id_direccion FROM UBICACIONES WHERE id_ubicacion = 'BOG-ALMACEN'),
     (SELECT id_direccion FROM UBICACIONES WHERE id_ubicacion = 'BOG-CHAPINERO'),
@@ -305,7 +307,7 @@ JOIN UBICACIONES u ON i.id_direccion = u.id_direccion
 WHERE i.id_producto = 2 AND u.id_ubicacion = 'BOG-CHAPINERO';
 
 -- Ventas en Chapinero
-INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad_bultoa, fecha_movimiento)
+INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad, fecha_movimiento)
 SELECT i.id_inventario, 1, 2, u.id_direccion, NULL, 5, '2025-10-18 11:20:00'
 FROM INVENTARIO i 
 JOIN UBICACIONES u ON i.id_direccion = u.id_direccion
@@ -317,7 +319,7 @@ JOIN UBICACIONES u ON i.id_direccion = u.id_direccion
 WHERE i.id_producto = 2 AND u.id_ubicacion = 'BOG-CHAPINERO';
 
 -- Ventas en Suba
-INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad_bultoa, fecha_movimiento)
+INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad, fecha_movimiento)
 SELECT i.id_inventario, 2, 2, u.id_direccion, NULL, 8, '2025-10-20 10:00:00'
 FROM INVENTARIO i 
 JOIN UBICACIONES u ON i.id_direccion = u.id_direccion
@@ -329,7 +331,7 @@ JOIN UBICACIONES u ON i.id_direccion = u.id_direccion
 WHERE i.id_producto = 5 AND u.id_ubicacion = 'BOG-SUBA';
 
 -- Ventas en Kennedy
-INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad_bultoa, fecha_movimiento)
+INSERT INTO MOVIMIENTOS_INVENTARIO (id_inventario, id_usuario, id_tipo_mov, id_direccion_origen, id_direccion_destino, cantidad, fecha_movimiento)
 SELECT i.id_inventario, 3, 2, u.id_direccion, NULL, 7, '2025-10-22 11:15:00'
 FROM INVENTARIO i 
 JOIN UBICACIONES u ON i.id_direccion = u.id_direccion
@@ -357,3 +359,7 @@ UNION ALL SELECT 'MOVIMIENTOS_INVENTARIO:', COUNT(*) FROM MOVIMIENTOS_INVENTARIO
 -- ============================================
 -- FIN DE LOS DATOS DE PRUEBA
 -- ============================================
+
+-- Restaurar modo SQL original
+SET SQL_MODE=@ORIG_SQL_MODE;
+

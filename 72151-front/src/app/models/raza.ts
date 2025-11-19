@@ -1,7 +1,7 @@
 export class Raza {
     idRaza?: number;
     nombreRaza: string;
-    tamano: 'pequeño' | 'mediano' | 'grande';
+    tamano: 'pequenio' | 'mediano' | 'grande';
     activo?: boolean;
 }
 

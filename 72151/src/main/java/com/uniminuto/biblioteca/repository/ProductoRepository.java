@@ -17,7 +17,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     @Query("SELECT p FROM Producto p WHERE p.estado = 'activo'")
     List<Producto> findProductosActivos();
 
-    @Query("SELECT new com.uniminuto.biblioteca.entity.ProductoMasSalidasDTO(p.nombreProducto, SUM(mi.cantidadBultoa)) " +
+    @Query("SELECT new com.uniminuto.biblioteca.entity.ProductoMasSalidasDTO(p.nombreProducto, SUM(mi.cantidad)) " +
            "FROM MovimientoInventario mi " +
            "JOIN mi.inventario i " +
            "JOIN i.producto p " +
@@ -25,8 +25,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
            "WHERE tm.nombreTipo = 'salida' AND mi.fechaMovimiento >= :fechaInicio " +
            "GROUP BY p.nombreProducto " +
            "ORDER BY " +
-           "CASE WHEN :orderDirection = 'ASC' THEN SUM(mi.cantidadBultoa) END ASC, " +
-           "CASE WHEN :orderDirection = 'DESC' THEN SUM(mi.cantidadBultoa) END DESC")
+           "CASE WHEN :orderDirection = 'ASC' THEN SUM(mi.cantidad) END ASC, " +
+           "CASE WHEN :orderDirection = 'DESC' THEN SUM(mi.cantidad) END DESC")
     List<ProductoMasSalidasDTO> findProductosMasSalidas(@Param("fechaInicio") Date fechaInicio, @Param("orderDirection") String orderDirection, Pageable pageable);
 }
 
