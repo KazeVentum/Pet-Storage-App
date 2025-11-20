@@ -2,6 +2,8 @@ package com.uniminuto.biblioteca.repository;
 
 import com.uniminuto.biblioteca.entity.Producto;
 import com.uniminuto.biblioteca.entity.ProductoMasSalidasDTO;
+import com.uniminuto.biblioteca.entity.ProductoFiltradoDTO; // New import
+import com.uniminuto.biblioteca.entity.Raza; // New import for TamanoRaza
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,5 +30,16 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
            "CASE WHEN :orderDirection = 'ASC' THEN SUM(mi.cantidad) END ASC, " +
            "CASE WHEN :orderDirection = 'DESC' THEN SUM(mi.cantidad) END DESC")
     List<ProductoMasSalidasDTO> findProductosMasSalidas(@Param("fechaInicio") Date fechaInicio, @Param("orderDirection") String orderDirection, Pageable pageable);
+
+    @Query("SELECT new com.uniminuto.biblioteca.entity.ProductoFiltradoDTO(" +
+           "p.nombreProducto, " +
+           "p.precioVenta, " +
+           "p.pesoKg) " +
+           "FROM Producto p " +
+           "JOIN p.marca m " +
+           "JOIN p.razas r " + // Join via ManyToMany relationship
+           "WHERE m.nombreMarca = :nombreMarca AND r.tamano = :tamanoRaza " +
+           "GROUP BY p.idProducto, p.nombreProducto, p.precioVenta, p.pesoKg") // Group by all non-aggregated selected fields
+    List<ProductoFiltradoDTO> filtrarProductosByMarcaAndTamanoRaza(@Param("nombreMarca") String nombreMarca, @Param("tamanoRaza") Raza.TamanoRaza tamanoRaza);
 }
 

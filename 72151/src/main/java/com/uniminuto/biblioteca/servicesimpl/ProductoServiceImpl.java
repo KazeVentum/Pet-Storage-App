@@ -3,7 +3,9 @@ package com.uniminuto.biblioteca.servicesimpl;
 import com.uniminuto.biblioteca.entity.Marca;
 import com.uniminuto.biblioteca.entity.Producto;
 import com.uniminuto.biblioteca.entity.ProductoMasSalidasDTO;
-import com.uniminuto.biblioteca.entity.Raza;
+import com.uniminuto.biblioteca.entity.ProductoFiltradoDTO; // New import
+import com.uniminuto.biblioteca.entity.Raza; // Keep this import for the entity
+import com.uniminuto.biblioteca.entity.Raza.TamanoRaza; // New specific import for the enum
 import com.uniminuto.biblioteca.repository.MarcaRepository;
 import com.uniminuto.biblioteca.repository.ProductoRepository;
 import com.uniminuto.biblioteca.repository.RazaRepository;
@@ -156,5 +158,22 @@ public class ProductoServiceImpl implements ProductoService {
         Pageable pageable = PageRequest.of(0, limit); // No sorting here, as it's handled in the query
 
         return productoRepository.findProductosMasSalidas(fechaInicio, orderDirectionString, pageable);
+    }
+
+    @Override
+    public List<ProductoFiltradoDTO> filtrarProductosByMarcaAndTamanoRaza(String nombreMarca, String tamanoRaza) throws BadRequestException {
+        if (nombreMarca == null || nombreMarca.trim().isEmpty()) {
+            throw new BadRequestException("El nombre de la marca es obligatorio para filtrar productos.");
+        }
+        if (tamanoRaza == null || tamanoRaza.trim().isEmpty()) {
+            throw new BadRequestException("El tamaño de la raza es obligatorio para filtrar productos.");
+        }
+
+        try {
+            TamanoRaza tamanoRazaEnum = TamanoRaza.valueOf(tamanoRaza.toLowerCase()); // Convert string to enum
+            return productoRepository.filtrarProductosByMarcaAndTamanoRaza(nombreMarca, tamanoRazaEnum);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Tamaño de raza inválido: " + tamanoRaza + ". Valores permitidos: pequenio, mediano, grande.");
+        }
     }
 }

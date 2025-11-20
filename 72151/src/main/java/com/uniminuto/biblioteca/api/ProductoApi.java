@@ -2,6 +2,7 @@ package com.uniminuto.biblioteca.api;
 
 import com.uniminuto.biblioteca.entity.Producto;
 import com.uniminuto.biblioteca.entity.ProductoMasSalidasDTO;
+import com.uniminuto.biblioteca.entity.ProductoFiltradoDTO; // New import
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +50,11 @@ public interface ProductoApi {
             @RequestParam(defaultValue = "30") int dias,
             @RequestParam(defaultValue = "5") int limit,
             @RequestParam(defaultValue = "desc") String order
+    ) throws BadRequestException;
+
+    @GetMapping("/filtrar") // New endpoint
+    ResponseEntity<List<ProductoFiltradoDTO>> filtrarProductos(
+            @RequestParam("marca") String nombreMarca,
+            @RequestParam("tamano") String tamanoRaza
     ) throws BadRequestException;
 }

@@ -3,11 +3,13 @@ package com.uniminuto.biblioteca.apicontroller;
 import com.uniminuto.biblioteca.api.ProductoApi;
 import com.uniminuto.biblioteca.entity.Producto;
 import com.uniminuto.biblioteca.entity.ProductoMasSalidasDTO;
+import com.uniminuto.biblioteca.entity.ProductoFiltradoDTO; // New import
 import com.uniminuto.biblioteca.services.ProductoService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam; // New import
 
 import java.util.List;
 
@@ -52,5 +54,13 @@ public class ProductoApiController implements ProductoApi {
     @Override
     public ResponseEntity<List<ProductoMasSalidasDTO>> findProductosMasSalidas(int dias, int limit, String order) throws BadRequestException {
         return ResponseEntity.ok(productoService.findProductosMasSalidas(dias, limit, order));
+    }
+
+    @Override
+    public ResponseEntity<List<ProductoFiltradoDTO>> filtrarProductos(
+            @RequestParam("marca") String nombreMarca,
+            @RequestParam("tamano") String tamanoRaza
+    ) throws BadRequestException {
+        return ResponseEntity.ok(productoService.filtrarProductosByMarcaAndTamanoRaza(nombreMarca, tamanoRaza));
     }
 }
