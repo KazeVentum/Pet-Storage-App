@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { PedidoCompraService } from 'src/app/services/pedido-compra.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
 import { PedidoCompraDetalle } from 'src/app/models/pedido-compra-detalle';
-import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router'; // Removed ActivatedRoute
 
 @Component({
   selector: 'app-pedido-compra',
   standalone: true,
-  imports: [CommonModule, FormsModule], // Add FormsModule
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './pedido-compra.component.html',
   styleUrl: './pedido-compra.component.scss'
 })
@@ -20,11 +21,18 @@ export class PedidoCompraComponent implements OnInit {
 
   constructor(
     private readonly pedidoCompraService: PedidoCompraService,
-    private readonly messageUtils: MessageUtils
+    private readonly messageUtils: MessageUtils,
+    private readonly router: Router // Inject Router
   ) { }
 
   ngOnInit(): void {
-    this.cargarPedidosDetalle();
+    const savedEstado = localStorage.getItem('pedidosCompraSelectedEstado');
+    if (savedEstado && this.estados.includes(savedEstado)) {
+      this.selectedEstado = savedEstado;
+    } else {
+      this.selectedEstado = this.estados[0]; // Default if no valid param
+    }
+    this.cargarPedidosDetalle(); // Load data based on selected or default state
   }
 
   cargarPedidosDetalle(): void {
@@ -41,6 +49,11 @@ export class PedidoCompraComponent implements OnInit {
 
   onEstadoChange(event: any): void {
     this.selectedEstado = event.target.value;
+    localStorage.setItem('pedidosCompraSelectedEstado', this.selectedEstado); // Save to localStorage
     this.cargarPedidosDetalle();
+  }
+
+  abrirDetallePedidoModal(idPedido: number): void {
+    this.router.navigate(['/inicio/pedidos-compra', idPedido, 'detalle']); // No query params
   }
 }

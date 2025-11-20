@@ -17,11 +17,12 @@
             <tr>
               <th>Fecha Pedido</th>
               <th>Proveedor</th>
+              <th>Acciones</th> <!-- New column header -->
             </tr>
           </thead>
           <tbody *ngIf="pedidosDetalle.length === 0">
             <tr>
-              <td colspan="2" class="text-center">No hay pedidos disponibles para este estado.</td> <!-- colspan adjusted -->
+              <td colspan="3" class="text-center">No hay pedidos disponibles para este estado.</td> <!-- colspan adjusted -->
             </tr>
           </tbody>
           <tbody *ngIf="pedidosDetalle.length > 0">
@@ -31,6 +32,11 @@
                 <p class="mb-0 fw-bold">{{ pedido.nombreProveedor }}</p>
                 <small class="d-block text-muted">{{ pedido.telefonoProveedor }}</small>
                 <small class="d-block text-muted">{{ pedido.emailProveedor }}</small>
+              </td>
+              <td>
+                <button class="btn btn-primary" [routerLink]="['/inicio/pedidos-compra', pedido.idPedido, 'detalle']">
+                  <i class="feather icon-list"></i> Detalle
+                </button>
               </td>
             </tr>
           </tbody>

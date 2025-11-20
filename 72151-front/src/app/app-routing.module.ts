@@ -7,7 +7,8 @@ import { MarcaComponent } from './demo/pages/marca/marca.component';
 import { RazaComponent } from './demo/pages/raza/raza.component';
 import { ProveedorComponent } from './demo/pages/proveedor/proveedor.component';
 import { InventarioComponent } from './demo/pages/inventario/inventario.component';
-import { PedidoCompraComponent } from './demo/pages/pedido-compra/pedido-compra.component'; // New import
+import { PedidoCompraComponent } from './demo/pages/pedido-compra/pedido-compra.component';
+import { PedidoDetalleViewComponent } from './demo/pages/pedido-compra/pedido-detalle-view.component'; // New import
 
 export const routes: Routes = [
   {
@@ -26,7 +27,12 @@ export const routes: Routes = [
       { path: 'razas', component: RazaComponent, data: { title: 'Razas' }},
       { path: 'proveedores', component: ProveedorComponent, data: { title: 'Proveedores' }}, 
       { path: 'inventario', component: InventarioComponent, data: { title: 'Inventario' }},
-      { path: 'pedidos-compra', component: PedidoCompraComponent, data: { title: 'Pedidos de Compra' }} // New route
+      { path: 'pedidos-compra', 
+        children: [
+          { path: '', component: PedidoCompraComponent, data: { title: 'Pedidos de Compra' }},
+          { path: ':idPedido/detalle', component: PedidoDetalleViewComponent, data: { title: 'Detalle de Pedido' }}
+        ]
+      } // Modified route to include children
     ]
   },
   { path: '**', redirectTo: 'inicio' }
